@@ -1,0 +1,47 @@
+#########################################################################
+#                                                                       #
+# 		classes.cf - Cfengine 3 user-defined classes		#
+#			     	      		     			#
+#########################################################################
+
+bundle common myclasses {
+
+classes: 
+	
+	#
+	# Cfengine Policy Servers
+	# 
+
+    	"policy_servers" or => {
+    	    	classify("$(g.policyhost)")
+    	};
+
+	#
+	# All hosts in the internal domain
+	#
+
+    	"example_org_hosts" or => {
+		classify("cfengine.example.org"),
+		classify("hv01.example.org"),
+		classify("hv02.example.org")
+    	};
+
+	#
+	# Proxmox VE machines
+	#
+	
+	"proxmoxve_nodes" or => {
+		classify("hv01.example.org"),
+		classify("hv02.example.org")
+	};
+
+	#
+	# GlusterFS nodes
+	#
+	# All "proxmoxve_nodes" are GlusterFS nodes
+	#
+	
+	"glusterfs_nodes" or => {
+		proxmoxve_nodes
+	};
+}

@@ -1,0 +1,36 @@
+#########################################################################
+#                                                                       #
+# 		apt - apt specific configurations		      	#
+#                                                                       #
+#########################################################################
+
+bundle agent apt { 
+
+files:
+
+	debian_6::
+
+	"/etc/apt/sources.list.d/pve.list"
+
+	comment		=> "Deploy Proxmox VE sources list",
+	perms		=> mog("0444", "root", "root"),
+	copy_from	=> remote_copy("$(g.masterfiles)/apt/pve.list-squeeze", "$(g.policyhost)"),
+	classes		=> if_repaired("squeeze_add_pve_key");
+
+	"/etc/apt/sources.list.d/glusterfs.list"
+
+	comment		=> "Deploy GlusterFS sources list",
+	perms		=> mog("0444", "root", "root"),
+	copy_from	=> remote_copy("$(g.masterfiles)/apt/glusterfs.list-squeeze", "$(g.policyhost)"),
+	classes		=> if_repaired("squeeze_add_glusterfs_key");
+
+commands:
+
+	squeeze_add_pve_key::
+
+	"/usr/bin/wget -O - http://download.proxmox.com/debian/key.asc | /usr/bin/apt-key add -";
+	
+	squeeze_add_glusterfs_key::
+
+	"/usr/bin/wget -O - http://download.gluster.org/pub/gluster/glusterfs/3.3/3.3.1/Debian/gpg.key | /usr/sbin/apt-key add -";
+}

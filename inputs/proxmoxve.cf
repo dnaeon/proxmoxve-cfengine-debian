@@ -1,0 +1,78 @@
+#########################################################################
+#                                                                       #
+# 		proxmoxve.cf - Proxmox VE Configurations		#
+#                                                                       #
+#########################################################################
+
+bundle agent proxmoxve {
+
+files:
+	
+	proxmoxve_nodes::
+
+		"/etc/apache2/sites-enabled/pve-redirect.conf"
+
+		comment		=> "Enable Proxmox VE Apache site",
+		link_from	=> ln_s("/etc/apache2/sites-available/pve-redirect.conf"),
+		classes		=> if_repaired("restart_apache");
+
+processes:
+
+commands:
+
+	restart_apache::
+
+		"/usr/sbin/service apache2 restart";
+
+packages:
+
+	proxmoxve_nodes::
+
+	"pve-firmware"
+	
+		package_policy  => "add",
+		package_version	=> "1.0-21",
+                package_method  => generic;
+
+	"pve-kernel-2.6.32-16-pve"
+
+		package_policy	=> "add",
+		package_version	=> "2.6.32-80",
+		package_method	=> generic;
+
+	"pve-headers-2.6.32-16-pve"
+
+		package_policy	=> "add",
+		package_version	=> "2.6.32-80",
+		package_method	=> generic;
+
+	"proxmox-ve-2.6.32"
+
+		package_policy	=> "add",
+		package_version	=> "2.2-80",
+		package_method	=> generic;
+
+	"ksm-control-daemon"
+		
+		package_policy	=> "add",
+		package_version	=> "1.1-1",
+		package_method	=> generic;
+
+	"vzprocps"
+		
+		package_policy	=> "add",
+		package_version	=> "2.0.11-2",
+		package_method	=> generic;
+
+	"postfix"
+		
+		package_policy	=> "add",
+		package_version	=> "2.7.1-1+squeeze1",
+		package_method	=> generic;
+
+	"ntp"
+		
+		package_policy	=> "add",
+		package_version	=> "1:4.2.6.p2+dfsg-1+b1",
+		package_method	=> generic;
+}
